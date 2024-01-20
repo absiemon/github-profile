@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+	<!-- Title of the page -->
+	<title>Find Github Profile</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+
+	<!-- External stylesheets for Tailwind CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" />
+	<link href="https://unpkg.com/@tailwindcss/custom-forms/dist/custom-forms.min.css" rel="stylesheet" />
+
+	<!-- Custom styles for Poppins font -->
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&family=Poppins:wght@400&display=swap');
+
+		html {
+			font-family: 'Nunito', sans-serif;
+			font-family: 'Poppins', sans-serif;
+			background-color: #D1FAE5;
+			color: #083156;
+		}
+	</style>
+</head>
+
+<body class="mx-6 my-2">
+	<div class="h-full">
+		<!-- Header -->
+		<header
+			class="sticky top-0 z-30 -mx-6 py-3 bg-emerald-100 shadow-lg flex items-center sm:justify-start justify-center">
+			<a href="" class="w-[100px] ml-5 font-semibold text-xl">
+				<span class="">Github Profile</span>
+			</a>
+		</header>
+		<!-- Main container -->
+		<div class="container pt-24 md:pt-36 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+
+			<div class=" block md:flex w-full justify-between overflow-y-hidden">
+				<!-- Page description -->
+				<div class="flex flex-col items-center sm:items-start">
+					<h1 class="my-4 text-3xl md:text-5xl font-bold leading-tight text-center md:text-left">
+						Find Your Github
+						</br>Repositories
+					</h1>
+					<p class="mt-2 text-lg">
+						&#9755; Search your github profile
+					  </p>
+					  <p class="mt-2 text-lg">&#9755; Explore the repositories</p>
+					  <p class="mt-2 text-lg">
+						&#9755; Get more detailed view through 
+						</br><span class="ml-5">github link</span>
+					  </p>
+					  <p class="mt-2 text-lg">
+						&#9755; Make your decision
+					  </p>
+				</div>
+
+				<!-- User input form -->
+				<form class="lg:w-1/2 h-56 shadow-xl rounded-lg px-8 pt-6 pb-8 mb-4" >
+					<!-- Github username input -->
+					<div class="mb-4">
+						<label class="block py-2 font-bold mb-2" for="username">
+							Enter your Github Username
+						</label>
+						<input
+							class="shadow appearance-none border rounded w-full p-3 text-gray-700 leading-tight focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+							id="username" type="text" placeholder="absiemon" />
+					</div>
+					<!-- Submit button -->
+					<div class="flex items-center justify-between pt-4">
+						<button
+							class="py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
+							style="background-color: #083156; color: #D1FAE5;"
+							type="button" id="searchBtn">
+							Search
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Code for handling user search -->
+	<script>
+		document.getElementById('searchBtn').addEventListener('click', function () {
+			var userName = document.getElementById('username').value
+
+			// Check if the input is not empty
+			if (!userName.trim()) {
+				alert('Please enter a GitHub username.')
+				return
+			}
+
+			// Redirect to user.html with encoded username
+			window.location.href = `user.html?user=${encodeURIComponent(userName)}`
+		})
+	</script>
+</body>
+
+</html>

@@ -49,19 +49,19 @@
 					</h1>
 					<p class="mt-2 text-lg">
 						&#9755; Search your github profile
-					  </p>
-					  <p class="mt-2 text-lg">&#9755; Explore the repositories</p>
-					  <p class="mt-2 text-lg">
-						&#9755; Get more detailed view through 
+					</p>
+					<p class="mt-2 text-lg">&#9755; Explore the repositories</p>
+					<p class="mt-2 text-lg">
+						&#9755; Get more detailed view through
 						</br><span class="ml-5">github link</span>
-					  </p>
-					  <p class="mt-2 text-lg">
+					</p>
+					<p class="mt-2 text-lg">
 						&#9755; Make your decision
-					  </p>
+					</p>
 				</div>
 
 				<!-- User input form -->
-				<form class="lg:w-1/2 h-56 shadow-xl rounded-lg px-8 pt-6 pb-8 mb-4" >
+				<form class="lg:w-1/2 h-56 shadow-xl rounded-lg px-8 pt-6 pb-8 mb-4">
 					<!-- Github username input -->
 					<div class="mb-4">
 						<label class="block py-2 font-bold mb-2" for="username">
@@ -75,8 +75,7 @@
 					<div class="flex items-center justify-between pt-4">
 						<button
 							class="py-2 px-4 rounded focus:ring transform transition hover:scale-105 duration-300 ease-in-out"
-							style="background-color: #083156; color: #D1FAE5;"
-							type="button" id="searchBtn">
+							style="background-color: #083156; color: #D1FAE5;" type="button" id="searchBtn">
 							Search
 						</button>
 					</div>
@@ -87,8 +86,9 @@
 
 	<!-- Code for handling user search -->
 	<script>
-		document.getElementById('searchBtn').addEventListener('click', function () {
-			var userName = document.getElementById('username').value
+		document.getElementById('searchBtn').addEventListener('click', async function () {
+			let userName = document.getElementById('username').value
+			let searchButton = document.getElementById('searchBtn')
 
 			// Check if the input is not empty
 			if (!userName.trim()) {
@@ -96,8 +96,32 @@
 				return
 			}
 
-			// Redirect to user.html with encoded username
-			window.location.href = `profile.html?user=${encodeURIComponent(userName)}`
+			async function fetchUserData(username) {
+				const apiUrl = `https://api.github.com/users/${username}`
+				
+				searchButton.innerText = 'Searching user...'
+				
+				return fetch(apiUrl)
+					.then(response => response.json())
+					.then(data =>{
+						searchButton.innerText = 'Search'
+
+						if(data?.message !== "Not Found"){
+							// Redirect to user.html with encoded username
+							window.location.href = `profile.html?user=${encodeURIComponent(userName)}`
+						}
+						else{
+							alert('No user found with this username.')
+							return
+						}
+
+					})
+					.catch(error => {
+						return null
+					})
+			}
+
+			await fetchUserData(encodeURIComponent(userName))
 		})
 	</script>
 </body>

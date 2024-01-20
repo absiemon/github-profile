@@ -1,9 +1,10 @@
 
 // Declaring global variables
-let totalRepos = 0;
+let totalRepos = 0; //Total repository
 let customParam // User parameter
 let currentPage = 1 // Current page number
 let reposPerPage = 10 // Default repositories per page
+let repositoryData = [] // Caching data for searching repos by name
 
 // Function to display repositories
 function displayRepos(repos) {
@@ -122,6 +123,9 @@ document.addEventListener('DOMContentLoaded', function () {
 			document.getElementById('following').innerText = userData?.following || '0'
 			document.getElementById('publicRepos').innerText =
 				userData?.public_repos || '0'
+			
+			//Caching repo data 
+			repositoryData = reposData
 
 			// Removing Loader when data is fetched
 
@@ -149,10 +153,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Function to handle input changes in the repository name field
 function handleRepoNameInput(value) {
-	const githubReposData = JSON.parse(localStorage.getItem(`${customParam}Repos`))
-	filterReposByName(value, githubReposData)
+	filterReposByName(value, repositoryData)
 }
-
 
 
 //Pagination
@@ -217,6 +219,9 @@ function goToPage(page) {
 		// Show main content container
 		document.getElementById('repoList').style.display = '';
 
+		//Caching repo data 
+		repositoryData = reposData
+
 		displayRepos(reposData)
 	})
 }
@@ -241,13 +246,18 @@ function prevPage() {
 			// Show main content container
 			document.getElementById('repoList').style.display = '';
 
+			//Caching repo data 
+			repositoryData = reposData
+
 			displayRepos(reposData)
 		})
     }
 }
 
 function nextPage() {
-    if (currentPage < totalRepos) {
+	let totalPages = Math.ceil(totalRepos/reposPerPage)
+
+    if (currentPage < totalPages) {
         currentPage++;
         generatePagination();
 
@@ -264,6 +274,9 @@ function nextPage() {
 			document.getElementById('repositoryLoading').style.display = 'none';
 			// Show main content container
 			document.getElementById('repoList').style.display = '';
+
+			//Caching repo data 
+			repositoryData = reposData
 
 			displayRepos(reposData)
 		})

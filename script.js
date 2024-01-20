@@ -6,7 +6,8 @@ let currentPage = 1 // Current page number
 let reposPerPage = 10 // Default repositories per page
 let repositoryData = [] // Caching data for searching repos by name
 
-// Function to display repositories
+
+// ---------------------Function to display repositories----------------------------------
 function displayRepos(repos) {
 	// Get repository list container
 	const repoListContainer = document.getElementById('repoList')
@@ -40,7 +41,7 @@ function displayRepos(repos) {
 }
 
 
-// Function to change repositories per page
+// -------------------------Function to change repositories per page----------------------------
 function changeReposPerPage(value) {
 	reposPerPage = parseInt(value, 10)
 	
@@ -61,7 +62,8 @@ function changeReposPerPage(value) {
 	})
 }
 
-// Function to filter repositories by name
+
+// ---------------------Function to filter repositories by name--------------------------
 function filterReposByName(name, repos) {
 	const filteredRepos = repos.filter(repo =>
 		repo.name.toLowerCase().includes(name.toLowerCase())
@@ -69,7 +71,8 @@ function filterReposByName(name, repos) {
 	displayRepos(filteredRepos)
 }
 
-// Function to fetch user data from GitHub API
+
+// --------------------Function to fetch user data from GitHub API----------------------------
 function fetchUserData(username) {
 	const apiUrl = `https://api.github.com/users/${username}`
 	return fetch(apiUrl)
@@ -80,7 +83,8 @@ function fetchUserData(username) {
 		})
 }
 
-// Event listener when DOM content is loaded
+
+// --------------------Event listener when DOM content is loaded-----------------------
 document.addEventListener('DOMContentLoaded', function () {
 	// Get username parameter from URL
 	const urlParams = new URLSearchParams(window.location.search)
@@ -151,13 +155,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		})
 })
 
-// Function to handle input changes in the repository name field
+
+// --------------------Function to handle input changes in the repository name field------------------
 function handleRepoNameInput(value) {
 	filterReposByName(value, repositoryData)
 }
 
 
-//Pagination
+//----------------------Pagination Implementation--------------------------------------------------
 const visiblePages = 5; 
 
 function generatePagination() {
@@ -200,6 +205,7 @@ function generatePagination() {
     paginationContainer.appendChild(nextButton);
 }
 
+//-------------------Function to handle particular page click--------------------- 
 function goToPage(page) {
     currentPage = page;
     generatePagination();
@@ -226,6 +232,8 @@ function goToPage(page) {
 	})
 }
 
+
+//-------------------Function to handle previous page click--------------------- 
 function prevPage() {
     if (currentPage > 1) {
         currentPage--;
@@ -254,6 +262,7 @@ function prevPage() {
     }
 }
 
+//-------------------Function to handle next page click--------------------- 
 function nextPage() {
 	let totalPages = Math.ceil(totalRepos/reposPerPage)
 

@@ -1,7 +1,7 @@
 
 // Declaring global variables
 let totalRepos = 0;
-let myParam // User parameter
+let customParam // User parameter
 let currentPage = 1 // Current page number
 let reposPerPage = 10 // Default repositories per page
 
@@ -42,8 +42,22 @@ function displayRepos(repos) {
 // Function to change repositories per page
 function changeReposPerPage(value) {
 	reposPerPage = parseInt(value, 10)
-	const githubReposData = JSON.parse(localStorage.getItem(`${myParam}Repos`))
-	displayRepos(githubReposData)
+	
+	//show loder when repos are being fetched
+	document.getElementById('repositoryLoading').style.display = 'flex';
+	document.getElementById('repoList').style.display = 'none';
+	// Fetching repos data and displaying it.
+	const urlParams = new URLSearchParams(window.location.search)
+	customParam = urlParams.get('user')
+	Promise.all([fetchUserData(`${customParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
+	.then(([reposData]) => {
+		// making display none of loader after repos are fetched
+		document.getElementById('repositoryLoading').style.display = 'none';
+		// Show main content container
+		document.getElementById('repoList').style.display = '';
+
+		displayRepos(reposData)
+	})
 }
 
 // Function to filter repositories by name
@@ -69,10 +83,10 @@ function fetchUserData(username) {
 document.addEventListener('DOMContentLoaded', function () {
 	// Get username parameter from URL
 	const urlParams = new URLSearchParams(window.location.search)
-	myParam = urlParams.get('user') // Assign value to myParam
+	customParam = urlParams.get('user') // Assign value to customParam
 
 	// Check if username is available
-	if (!myParam) {
+	if (!customParam) {
 		console.error('Username not found in the URL.')
 		return
 	}
@@ -93,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	`
 
 	// Fetch user data and repositories
-	Promise.all([fetchUserData(myParam), fetchUserData(`${myParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
+	Promise.all([fetchUserData(customParam), fetchUserData(`${customParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
 		.then(([userData, reposData]) => {
 			// Populate user information
 			document.getElementById('userProfilePicture').src =
@@ -109,10 +123,17 @@ document.addEventListener('DOMContentLoaded', function () {
 			document.getElementById('publicRepos').innerText =
 				userData?.public_repos || '0'
 
+			// Removing Loader when data is fetched
+
 			// making display none of loader after user is fetched
 			document.getElementById('loadingContainer').style.display = 'none';
 			// Show main content container
 			document.getElementById('user_main_containter').style.display = 'block';
+
+			// making display none of loader after user is fetched
+			document.getElementById('repositoryLoading').style.display = 'none';
+			// Show main content container
+			document.getElementById('repoList').style.display = '';
 
 
 			// Display repos based on the default repos per page value
@@ -128,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Function to handle input changes in the repository name field
 function handleRepoNameInput(value) {
-	const githubReposData = JSON.parse(localStorage.getItem(`${myParam}Repos`))
+	const githubReposData = JSON.parse(localStorage.getItem(`${customParam}Repos`))
 	filterReposByName(value, githubReposData)
 }
 
@@ -140,6 +161,8 @@ const visiblePages = 5;
 function generatePagination() {
     const paginationContainer = document.querySelector('.pagination');
     paginationContainer.innerHTML = '';
+	
+	const totalPages = Math.ceil(totalRepos / reposPerPage)
 
     // Add "Previous" button
     const prevButton = document.createElement('button');
@@ -149,15 +172,15 @@ function generatePagination() {
     paginationContainer.appendChild(prevButton);
 
     // Add page numbers
-    for (let i = 1; i <= totalRepos; i++) {
-        if (i === 1 || i === totalRepos || (i >= currentPage - Math.floor(visiblePages / 2) && i <= currentPage + Math.floor(visiblePages / 2))) {
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - Math.floor(visiblePages / 2) && i <= currentPage + Math.floor(visiblePages / 2))) {
             const pageButton = document.createElement('button');
             pageButton.innerText = i;
             pageButton.className = `page ${i === currentPage ? 'bg-blue-900 text-white' : 'bg-gray-300 hover:bg-gray-400'} px-4 py-2 rounded cursor-pointer`;
             pageButton.onclick = () => goToPage(i);
             paginationContainer.appendChild(pageButton);
         } 
-		if (i === totalRepos - 1) {
+		if (i === totalPages - 1) {
             const ellipsis = document.createElement('span');
             ellipsis.innerText = '…';
             ellipsis.className = 'ellipsis text-gray-500 px-4 py-2 cursor-pointer';
@@ -178,12 +201,22 @@ function generatePagination() {
 function goToPage(page) {
     currentPage = page;
     generatePagination();
-    		
+    
+	//show loder when repos are being fetched
+	document.getElementById('repositoryLoading').style.display = 'flex';
+	document.getElementById('repoList').style.display = 'none';
+
     // Fetching repos data and displaying it.
 	const urlParams = new URLSearchParams(window.location.search)
-	myParam = urlParams.get('user')
-	Promise.all([fetchUserData(`${myParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
+	customParam = urlParams.get('user')
+	Promise.all([fetchUserData(`${customParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
 	.then(([reposData]) => {
+
+		// making display none of loader after repos are fetched
+		document.getElementById('repositoryLoading').style.display = 'none';
+		// Show main content container
+		document.getElementById('repoList').style.display = '';
+
 		displayRepos(reposData)
 	})
 }
@@ -193,11 +226,21 @@ function prevPage() {
         currentPage--;
         generatePagination();
 		
+		//show loder when repos are being fetched
+		document.getElementById('repositoryLoading').style.display = 'flex';
+		document.getElementById('repoList').style.display = 'none';
+
     	// Fetching repos data and displaying it.
 		const urlParams = new URLSearchParams(window.location.search)
-		myParam = urlParams.get('user')
-		Promise.all([fetchUserData(`${myParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
+		customParam = urlParams.get('user')
+		Promise.all([fetchUserData(`${customParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
 		.then(([reposData]) => {
+
+			// making display none of loader after repos are fetched
+			document.getElementById('repositoryLoading').style.display = 'none';
+			// Show main content container
+			document.getElementById('repoList').style.display = '';
+
 			displayRepos(reposData)
 		})
     }
@@ -208,11 +251,20 @@ function nextPage() {
         currentPage++;
         generatePagination();
 
+		//show loder when repos are being fetched
+		document.getElementById('repositoryLoading').style.display = 'flex';
+		document.getElementById('repoList').style.display = 'none';
+
         // Fetching repos data and displaying it.
 		const urlParams = new URLSearchParams(window.location.search)
-		myParam = urlParams.get('user')
-		Promise.all([fetchUserData(`${myParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
+		customParam = urlParams.get('user')
+		Promise.all([fetchUserData(`${customParam}/repos?per_page=${reposPerPage}&page=${currentPage}`)])
 		.then(([reposData]) => {
+			// making display none of loader after repos are fetched
+			document.getElementById('repositoryLoading').style.display = 'none';
+			// Show main content container
+			document.getElementById('repoList').style.display = '';
+
 			displayRepos(reposData)
 		})
 
